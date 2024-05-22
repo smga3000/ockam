@@ -9,6 +9,7 @@ use clap::{Args, Parser, Subcommand};
 use ockam::abac::tokio::runtime::Runtime;
 use ockam::compat::tokio;
 use ockam::tcp::{TcpListenerOptions, TcpTransport};
+use ockam::udp::UdpTransport;
 use ockam::{Context, NodeBuilder};
 use ockam_api::nodes::service::{NodeManagerGeneralOptions, NodeManagerTransportOptions};
 use ockam_api::nodes::{InMemoryNode, NodeManagerWorker, NODEMANAGER_ADDR};
@@ -190,7 +191,12 @@ impl State {
                     None,
                     false,
                 ),
-                NodeManagerTransportOptions::new(listener.flow_control_id().clone(), tcp),
+                NodeManagerTransportOptions::new(
+                    listener.flow_control_id().clone(),
+                    tcp,
+                    false,
+                    UdpTransport::create(&ctx).await?,
+                ),
                 trust_options,
             )
             .await?,

@@ -163,7 +163,12 @@ impl InMemoryNode {
                 http_server_port,
                 false,
             ),
-            NodeManagerTransportOptions::new(tcp_listener.flow_control_id().clone(), tcp, udp),
+            NodeManagerTransportOptions::new(
+                tcp_listener.flow_control_id().clone(),
+                tcp,
+                false,
+                udp,
+            ),
             trust_options,
         )
         .await

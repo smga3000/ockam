@@ -392,7 +392,7 @@ impl NodeManager {
 
         if secure_channel_type == SecureChannelType::KeyExchangeAndMessages {
             // TODO: Clean
-            // Add Echoer, Uppercase and Cred Exch as a consumer by default
+            // Add Echoer and Uppercase as a consumer by default
             ctx.flow_controls()
                 .add_consumer(DefaultAddress::ECHO_SERVICE, listener.flow_control_id());
 

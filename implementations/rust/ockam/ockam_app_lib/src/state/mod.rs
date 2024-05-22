@@ -8,6 +8,7 @@ use tracing::{error, info, trace, warn};
 
 pub use kind::StateKind;
 use ockam::tcp::{TcpListenerOptions, TcpTransport};
+use ockam::udp::UdpTransport;
 use ockam::AsyncTryClone;
 use ockam::Context;
 use ockam::NodeBuilder;
@@ -721,7 +722,12 @@ pub(crate) async fn make_node_manager(
                 None,
                 true,
             ),
-            NodeManagerTransportOptions::new(listener.flow_control_id().clone(), tcp),
+            NodeManagerTransportOptions::new(
+                listener.flow_control_id().clone(),
+                tcp,
+                false,
+                UdpTransport::create(&ctx).await.into_diagnostic()?,
+            ),
             trust_options,
         )
         .await

@@ -10,6 +10,7 @@ use tokio::time::{sleep, Duration};
 use tracing::{debug, info, instrument};
 
 use ockam::tcp::{TcpListenerOptions, TcpTransport};
+use ockam::udp::UdpTransport;
 use ockam::{Address, Context};
 use ockam_api::colors::color_primary;
 use ockam_api::nodes::InMemoryNode;
@@ -122,7 +123,12 @@ impl CreateCommand {
                 http_server_port,
                 true,
             ),
-            NodeManagerTransportOptions::new(tcp_listener.flow_control_id().clone(), tcp),
+            NodeManagerTransportOptions::new(
+                tcp_listener.flow_control_id().clone(),
+                tcp,
+                self.enable_udp,
+                UdpTransport::create(ctx).await.into_diagnostic()?,
+            ),
             trust_options,
         )
         .await

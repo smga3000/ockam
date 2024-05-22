@@ -19,6 +19,7 @@ use ockam::identity::utils::AttributesBuilder;
 use ockam::identity::SecureChannels;
 use ockam::tcp::{TcpListenerOptions, TcpTransport};
 use ockam::transport::HostnamePort;
+use ockam::udp::UdpTransport;
 use ockam::Result;
 use ockam_core::AsyncTryClone;
 
@@ -96,6 +97,8 @@ pub async fn start_manager_for_tests(
         NodeManagerTransportOptions::new(
             tcp_listener.flow_control_id().clone(),
             tcp.async_try_clone().await?,
+            false,
+            UdpTransport::create(context).await?,
         ),
         trust_options.unwrap_or_else(|| {
             NodeManagerTrustOptions::new(
