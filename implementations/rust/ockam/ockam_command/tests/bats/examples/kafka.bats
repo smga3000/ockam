@@ -5,6 +5,7 @@
 setup() {
   load ../load/base.bash
   load ../load/orchestrator.bash
+  load ./setup.bash
   load_bats_ext
   setup_home_dir
   skip_if_orchestrator_tests_not_enabled
@@ -12,73 +13,106 @@ setup() {
 }
 
 teardown() {
-  ./run.sh cleanup || true
+  echo "#==== $EXTRA_ARG" >&3
+  ./run.sh cleanup $EXTRA_ARG || true
+  unset EXTRA_ARG
   cd -
   teardown_home_dir
 }
 
-wait_till_container_starts() {
-  container_to_listen_to="$1"
-  timeout 250s bash <<EOT
-    while true; do
-      sleep 2
-      docker logs "$container_to_listen_to" >/dev/null || continue
-      break
-    done
-EOT
-}
-
-wait_till_successful_run_or_error() {
-  container_to_listen_to="$1"
-  # Wait till consumer exits and grab the exit code
-  consumer_exit_code=$(docker wait "$container_to_listen_to")
-
-  if [ "$consumer_exit_code" -eq 137 ] ; then
-    exit_code=0
-    return
-  fi
-
-  exit_code=$consumer_exit_code
-}
-
-exit_on_successful() {
-  container_to_listen_to="$1"
-  while true; do
-    logs=$(docker logs "$container_to_listen_to")
-    if [[ "$logs" == *"The example run was successful 🥳"$'\n'* ]]; then
-      docker stop "$container_to_listen_to"
-      return
-    fi
-    sleep 1
-  done
-}
-
 # ===== TESTS
 
+@test "examples - kafka - aiven serverless" {
+  container_to_watch="application_team-consumer-1"
+  cd examples/command/portals/kafka/aiven
+  ./run.sh >/dev/null &
+  BGPID=$!
+  trap 'kill $BGPID; exit' INT
+
+  run_success wait_till_container_starts "$container_to_watch"
+
+  exit_on_successful "$container_to_watch" &
+
+  wait_till_successful_run_or_error "$container_to_watch"
+  assert_equal "$exit_code" "0"
+}
+
+@test "examples - kafka - instaclustr serverless" {
+  container_to_watch="application_team-consumer-1"
+  cd examples/command/portals/kafka/instaclustr/docker
+  ./run.sh >/dev/null &
+  BGPID=$!
+  trap 'kill $BGPID; exit' INT
+
+  run_success wait_till_container_starts "$container_to_watch" "900s"
+
+  exit_on_successful "$container_to_watch" &
+
+  wait_till_successful_run_or_error "$container_to_watch"
+  assert_equal "$exit_code" "0"
+}
+
+@test "examples - kafka - confluent serverless" {
+  container_to_watch="application_team-consumer-1"
+  cd examples/command/portals/kafka/confluent
+  ./run.sh >/dev/null &
+  BGPID=$!
+  trap 'kill $BGPID; exit' INT
+
+  run_success wait_till_container_starts "$container_to_watch"
+
+  exit_on_successful "$container_to_watch" &
+
+  wait_till_successful_run_or_error "$container_to_watch"
+  assert_equal "$exit_code" "0"
+}
+
+@test "examples - kafka - warpstream serverless" {
+  export EXTRA_ARG="$WARPSTREAM_API_KEY"
+  container_to_watch="application_team-consumer-1"
+
+  cd examples/command/portals/kafka/warpstream
+  ./run.sh $WARPSTREAM_API_KEY >/dev/null &
+  BGPID=$!
+  trap 'kill $BGPID; exit' INT
+
+  run_success wait_till_container_starts "$container_to_watch"
+
+  exit_on_successful "$container_to_watch" &
+
+  wait_till_successful_run_or_error "$container_to_watch"
+  assert_equal "$exit_code" "0"
+}
+
+
 @test "examples - kafka - apache docker" {
+  container_to_watch="application_team-consumer-1"
+
   cd examples/command/portals/kafka/apache/docker
   ./run.sh >/dev/null &
   BGPID=$!
   trap 'kill $BGPID; exit' INT
 
-  run_success wait_till_container_starts "application_team-consumer-1"
+  run_success wait_till_container_starts "$container_to_watch"
 
-  exit_on_successful "application_team-consumer-1" &
+  exit_on_successful "$container_to_watch" &
 
-  wait_till_successful_run_or_error "application_team-consumer-1"
+  wait_till_successful_run_or_error "$container_to_watch"
   assert_equal "$exit_code" "0"
 }
 
 @test "examples - kafka - redpanda docker" {
-  cd examples/command/portals/kafka/apache/docker
+  container_to_watch="application_team-consumer-1"
+
+  cd examples/command/portals/kafka/redpanda/docker
   ./run.sh >/dev/null &
   BGPID=$!
   trap 'kill $BGPID; exit' INT
 
-  run_success wait_till_container_starts "application_team-consumer-1"
+  run_success wait_till_container_starts "$container_to_watch"
 
-  exit_on_successful "application_team-consumer-1" &
+  exit_on_successful "$container_to_watch" &
 
-  wait_till_successful_run_or_error "application_team-consumer-1"
+  wait_till_successful_run_or_error "$container_to_watch"
   assert_equal "$exit_code" "0"
 }

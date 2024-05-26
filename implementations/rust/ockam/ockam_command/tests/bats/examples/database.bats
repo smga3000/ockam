@@ -5,6 +5,7 @@
 setup() {
   load ../load/base.bash
   load ../load/orchestrator.bash
+  load ./setup.bash
   load_bats_ext
   setup_home_dir
   skip_if_orchestrator_tests_not_enabled
@@ -16,6 +17,7 @@ teardown() {
   cd -
   teardown_home_dir
 }
+
 
 # ===== TESTS
 

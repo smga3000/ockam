@@ -13,7 +13,7 @@ tcp-listener-address: 0.0.0.0:4000
 kafka-inlet:
   from: 127.0.0.1:9092
   to: /secure/api
-  consumer-relays: /project/default
+  consumer: /project/default
 
 kafka-outlet:
   bootstrap-server: ${REDPANDA_ADDRESS}
