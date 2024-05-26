@@ -26,8 +26,8 @@ async function connect(attempts = 100, waitTimeBetweenAttempts = 10000) {
 }
 
 async function run() {
-    const client = await connect();
-    try {
+  const client = await connect();
+  try {
     const database = client.db('sample');
     const users = database.collection('users');
 
@@ -38,7 +38,7 @@ async function run() {
     const result = await users.find().toArray()
     console.log("USERS:", result);
     console.log(
-      "\nThe example run was successful 🥳.\n" +
+      "\nThe example run was successful 🥳\n" +
       "\nThe app connected with the database through an encrypted portal." +
       "\nInserted some data, and querried it back.\n",
     );

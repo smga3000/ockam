@@ -28,13 +28,17 @@ services:
           echo "Press Ctrl+C to stop the container at any time, then execute "\
           "'./run.sh cleanup' to remove all containers.";
           echo "";
-          kafka-console-consumer.sh --topic demo --bootstrap-server 127.0.0.1:9092 --max-messages 8;
-          if [ "$?" == "0" ]; then
-            echo "";
-            echo "The example run was successful 🥳";
-            echo "The consumer was able to decrypt messages, Redpanda only saw encrypted messages";
-            echo "";
+          kafka-console-consumer.sh --topic demo --timeout-ms 50000 --bootstrap-server 127.0.0.1:9092 --max-messages 8 | tee output.txt;
+          if [[ ! -s output.txt ]]; then
+            echo "Failed to received messages";
+            exit 1;
           fi;
+
+          echo "";
+          echo "The example run was successful 🥳";
+          echo "The consumer was able to decrypt messages, Redpanda only saw encrypted messages";
+          echo "";
+
           echo "=======================================================================";
           echo "Open the console at http://127.0.0.1:8080 to see the encryted messages.";
           echo "=======================================================================";
