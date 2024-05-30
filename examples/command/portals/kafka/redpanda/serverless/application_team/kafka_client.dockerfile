@@ -20,8 +20,6 @@ RUN mirror=$(curl --stderr /dev/null https://www.apache.org/dyn/closer.cgi\?as_j
 ENV PATH "/sbin:/opt/kafka/bin/:$PATH"
 
 # Install Ockam
-RUN curl --proto '=https' --tlsv1.2 -sSfL https://install.command.ockam.io | bash -s
-ENV PATH "/root/.ockam/bin:$PATH"
 COPY --from=builder /ockam /usr/local/bin/ockam
 
 # Copy the script that will be used as entrypoint

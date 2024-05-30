@@ -40,3 +40,7 @@ exit_on_successful() {
     sleep 1
   done
 }
+
+# Proposition to test Kubernetes
+# Check till pod exist
+# Wait till Pod till is in the state of CrashLoopBackOff (which means it's exited) or pod log gives a success
