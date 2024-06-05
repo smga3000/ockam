@@ -4,7 +4,7 @@ use crate::{
 };
 use ockam_core::{async_trait, Address, Result, Route, Routed, Worker};
 use ockam_node::Context;
-use tracing::{debug, warn};
+use tracing::{debug, info, warn};
 
 /// High level management interface for UDP Rendezvous Service
 ///
@@ -113,6 +113,7 @@ impl Worker for RendezvousWorker {
                 let res = self.handle_get_my_address(&return_route);
                 match res {
                     Some(udp_address) => {
+                        info!("{} got its public address", udp_address);
                         ctx.send(return_route, RendezvousResponse::GetMyAddress(udp_address))
                             .await?;
                     }

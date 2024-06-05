@@ -11,6 +11,7 @@ use ockam_core::{
 use ockam_node::{Context, DelayedEvent, WorkerBuilder};
 use std::time::{Duration, Instant};
 use tokio::sync::broadcast::Sender;
+use tracing::log::warn;
 use tracing::{debug, info, trace};
 
 const HEARTBEAT_EVERY: Duration = Duration::from_secs(1);
@@ -166,7 +167,7 @@ impl UdpHolePunchWorker {
         return_route: &Route,
     ) -> Result<()> {
         let msg = PunchMessage::decode(msg.payload())?;
-        debug!("Peer => Puncher: {:?}", msg);
+        trace!("Peer => Puncher: {:?}", msg);
 
         // Record contact with peer, but only for pong and payload message.
         // Ping message doesn't guarantee that the other side is reachable
@@ -175,17 +176,17 @@ impl UdpHolePunchWorker {
         // Handle message
         match msg {
             PunchMessage::Ping => {
-                debug!("Received Ping from peer. Will Pong.");
                 self.first_ping_received = true;
-                if self.pongs_sent < 20 {
-                    ctx.send_from_address(
-                        return_route.clone(),
-                        PunchMessage::Pong,
-                        self.addresses.remote_address().clone(),
-                    )
-                    .await?;
-                    self.pongs_sent += 1;
-                }
+                // if self.pongs_sent < 20 {
+                debug!("Received Ping from peer. Will Pong.");
+                ctx.send_from_address(
+                    return_route.clone(),
+                    PunchMessage::Pong,
+                    self.addresses.remote_address().clone(),
+                )
+                .await?;
+                self.pongs_sent += 1;
+                // }
             }
             PunchMessage::Pong => {
                 debug!("Received Pong from peer. Setting as hole is open");
@@ -228,7 +229,7 @@ impl UdpHolePunchWorker {
 
         // If we have not heard from peer for a while, consider hole as closed
         if self.hole_open && self.peer_received_at.elapsed() >= HOLE_OPEN_TIMEOUT {
-            info!("Not heard from peer for a while. Setting as hole closed.",);
+            warn!("Not heard from peer for a while. Setting as hole closed.",);
 
             _ = self.notify_hole_open_sender.send(route![]);
 

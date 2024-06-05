@@ -1,7 +1,7 @@
 use ockam_core::Result;
 use ockam_node::Context;
 use ockam_transport_udp::{UdpBindArguments, UdpBindOptions, UdpRendezvousService, UdpTransport};
-use tracing::debug;
+use tracing::info;
 
 #[ockam_macros::node]
 async fn main(ctx: Context) -> Result<()> {
@@ -9,7 +9,7 @@ async fn main(ctx: Context) -> Result<()> {
         .nth(1)
         .unwrap_or(String::from("0.0.0.0:4000"));
 
-    debug!("Starting UDP Rendezvous service listening on {}", addr);
+    info!("Starting UDP Rendezvous service listening on {}", addr);
 
     UdpRendezvousService::start(&ctx, "rendezvous").await?;
 

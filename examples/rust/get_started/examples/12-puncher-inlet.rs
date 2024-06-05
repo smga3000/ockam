@@ -59,7 +59,7 @@ async fn do_main(node: &mut Node) -> Result<()> {
 
     node.context().sleep(Duration::from_secs(10)).await;
 
-    let mut receiver = UdpHolePuncherNegotiation::start_negotiation(
+    let (mut receiver, _) = UdpHolePuncherNegotiation::start_negotiation(
         node.context(),
         route![sc_main.clone(), "udp"],
         &udp,

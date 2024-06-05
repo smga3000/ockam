@@ -54,9 +54,14 @@ pub struct CreateInlet {
     /// The identifier to be used to create the secure channel.
     /// If not set, the node's identifier will be used.
     #[n(10)] pub(crate) secure_channel_identifier: Option<Identifier>,
+    /// Enable UDP NAT puncture.
+    #[n(11)] pub enable_udp_puncture: bool,
+    /// Disable fallback to tcp via relay
+    #[n(12)] pub disable_tcp_fallback: bool,
 }
 
 impl CreateInlet {
+    #[allow(clippy::too_many_arguments)]
     pub fn via_project(
         listen: String,
         to: MultiAddr,
@@ -64,6 +69,8 @@ impl CreateInlet {
         prefix_route: Route,
         suffix_route: Route,
         wait_connection: bool,
+        enable_udp_puncture: bool,
+        disable_tcp_fallback: bool,
     ) -> Self {
         Self {
             listen_addr: listen,
@@ -76,9 +83,12 @@ impl CreateInlet {
             policy_expression: None,
             wait_connection,
             secure_channel_identifier: None,
+            enable_udp_puncture,
+            disable_tcp_fallback,
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn to_node(
         listen: String,
         to: MultiAddr,
@@ -87,6 +97,8 @@ impl CreateInlet {
         suffix_route: Route,
         auth: Option<Identifier>,
         wait_connection: bool,
+        enable_udp_puncture: bool,
+        disable_tcp_fallback: bool,
     ) -> Self {
         Self {
             listen_addr: listen,
@@ -99,6 +111,8 @@ impl CreateInlet {
             policy_expression: None,
             wait_connection,
             secure_channel_identifier: None,
+            enable_udp_puncture,
+            disable_tcp_fallback,
         }
     }
 

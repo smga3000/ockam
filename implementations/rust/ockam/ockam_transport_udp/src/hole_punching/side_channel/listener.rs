@@ -4,6 +4,7 @@ use crate::hole_punching::side_channel::worker::UdpHolePuncherNegotiationWorker;
 use crate::{UdpBindArguments, UdpBindOptions, UdpTransport};
 use ockam_core::{async_trait, Address, Any, Decodable, Result, Route, Routed, Worker};
 use ockam_node::Context;
+use tracing::info;
 
 /// FIXME
 pub struct UdpHolePuncherNegotiationListener {
@@ -40,6 +41,8 @@ impl Worker for UdpHolePuncherNegotiationListener {
         ctx: &mut Self::Context,
         msg: Routed<Self::Message>,
     ) -> Result<()> {
+        info!("Received a UDP puncture request");
+
         let src_addr = msg.src_addr();
         let msg_payload = UdpHolePuncherNegotiationMessage::decode(msg.payload())?;
 

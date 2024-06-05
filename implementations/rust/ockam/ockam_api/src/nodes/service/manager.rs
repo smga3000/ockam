@@ -22,7 +22,7 @@ use ockam::identity::{
     SecureChannels,
 };
 use ockam::tcp::TcpTransport;
-use ockam::udp::{UdpHolePuncherNegotiationListener, UdpTransport, UDP};
+use ockam::udp::{UdpHolePuncherNegotiationListener, UdpTransport};
 use ockam::{RelayService, RelayServiceOptions};
 use ockam_abac::expr::str;
 use ockam_abac::{
@@ -172,8 +172,10 @@ impl NodeManager {
         }
 
         if transport_options.enable_udp {
-            let rendezvous_addr = "ec2-13-51-204-238.eu-north-1.compute.amazonaws.com"; // FIXME
-            let rendezvous_route = route![(UDP, rendezvous_addr), DefaultAddress::RENDEZVOUS];
+            let rendezvous_route = route![
+                DefaultAddress::get_rendezvous_server_address(),
+                DefaultAddress::RENDEZVOUS
+            ];
             UdpHolePuncherNegotiationListener::create(
                 ctx,
                 DefaultAddress::UDP_HOLE_PUNCHER_LISTENER,
@@ -249,7 +251,7 @@ impl NodeManager {
 
         RelayService::create(ctx, DefaultAddress::RELAY_SERVICE, options).await?;
 
-        Ok(listener)
+        Ok(secure_channel_listener)
     }
 
     async fn initialize_services(

@@ -73,7 +73,7 @@ impl BackgroundNodeClient {
             cli_state: cli_state.clone(),
             node_name: node_name.to_string(),
             to: NODEMANAGER_ADDR.into(),
-            timeout: Some(Duration::from_secs(30)),
+            timeout: Some(Duration::from_secs(60)), // TODO: May need longer for UDP puncture
             tcp_transport: Arc::new(tcp_transport.clone()),
         })
     }

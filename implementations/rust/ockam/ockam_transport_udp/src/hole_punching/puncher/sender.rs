@@ -4,6 +4,7 @@ use ockam_core::{Any, Encodable, LocalMessage, Result, Route, Routed, Worker};
 use ockam_node::Context;
 use tokio::sync::broadcast::error::RecvError;
 use tokio::sync::broadcast::Receiver;
+use tracing::log::trace;
 use tracing::{debug, error};
 
 pub(crate) struct UdpHolePunchSenderWorker {
@@ -42,7 +43,7 @@ impl UdpHolePunchSenderWorker {
             .with_payload(wrapped_payload.encode()?);
 
         // Forward
-        debug!("Puncher => Peer: {:?}", msg);
+        trace!("Puncher => Peer: {:?}", msg);
         ctx.forward(msg).await
     }
 

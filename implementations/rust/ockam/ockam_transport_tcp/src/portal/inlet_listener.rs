@@ -9,6 +9,12 @@ use ockam_transport_core::{HostnamePort, TransportError};
 use tokio::net::TcpListener;
 use tracing::{debug, error, instrument};
 
+#[derive(Debug, Clone)]
+pub struct OutletSharedState {
+    pub route: Route,
+    pub is_paused: bool,
+}
+
 /// A TCP Portal Inlet listen processor
 ///
 /// TCP Portal Inlet listen processors are created by `TcpTransport`
@@ -17,7 +23,7 @@ use tracing::{debug, error, instrument};
 pub(crate) struct TcpInletListenProcessor {
     registry: TcpRegistry,
     inner: TcpListener,
-    outlet_listener_route: Arc<RwLock<Route>>,
+    outlet_shared_state: Arc<RwLock<OutletSharedState>>,
     options: TcpInletOptions,
 }
 
@@ -25,13 +31,13 @@ impl TcpInletListenProcessor {
     pub fn new(
         registry: TcpRegistry,
         inner: TcpListener,
-        outlet_listener_route: Arc<RwLock<Route>>,
+        outlet_shared_state: Arc<RwLock<OutletSharedState>>,
         options: TcpInletOptions,
     ) -> Self {
         Self {
             registry,
             inner,
-            outlet_listener_route,
+            outlet_shared_state,
             options,
         }
     }
@@ -56,8 +62,12 @@ impl TcpInletListenProcessor {
             }
         };
         let socket_addr = inner.local_addr().map_err(TransportError::from)?;
-        let outlet_listener_route = Arc::new(RwLock::new(outlet_listener_route));
-        let processor = Self::new(registry, inner, outlet_listener_route.clone(), options);
+        let outlet_shared_state = OutletSharedState {
+            route: outlet_listener_route,
+            is_paused: options.is_paused,
+        };
+        let outlet_shared_state = Arc::new(RwLock::new(outlet_shared_state));
+        let processor = Self::new(registry, inner, outlet_shared_state.clone(), options);
 
         ctx.start_processor(processor_address.clone(), processor)
             .await?;
@@ -65,7 +75,7 @@ impl TcpInletListenProcessor {
         Ok(TcpInlet::new(
             socket_addr,
             processor_address,
-            outlet_listener_route,
+            outlet_shared_state,
         ))
     }
 }
@@ -95,11 +105,17 @@ impl Processor for TcpInletListenProcessor {
 
         let addresses = Addresses::generate(PortalType::Inlet);
 
-        let outlet_listener_route = self.outlet_listener_route.read().unwrap().clone();
+        let outlet_shared_state = self.outlet_shared_state.read().unwrap().clone();
+
+        if outlet_shared_state.is_paused {
+            // Just drop the stream
+            return Ok(true);
+        }
+
         self.options.setup_flow_control(
             ctx.flow_controls(),
             &addresses,
-            outlet_listener_route.next()?,
+            outlet_shared_state.route.next()?,
         );
 
         TcpPortalWorker::start_new_inlet(
@@ -107,7 +123,7 @@ impl Processor for TcpInletListenProcessor {
             self.registry.clone(),
             stream,
             HostnamePort::from_socket_addr(socket_addr)?,
-            outlet_listener_route,
+            outlet_shared_state.route,
             addresses,
             self.options.incoming_access_control.clone(),
             self.options.outgoing_access_control.clone(),

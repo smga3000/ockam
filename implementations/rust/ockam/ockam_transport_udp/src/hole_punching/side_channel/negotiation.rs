@@ -4,19 +4,20 @@ use crate::{UdpBindArguments, UdpBindOptions, UdpTransport};
 use ockam_core::{Address, Result, Route};
 use ockam_node::Context;
 use tokio::sync::broadcast;
-use tokio::sync::broadcast::Receiver;
+use tokio::sync::broadcast::{Receiver, Sender};
 
 /// FIXME
 pub struct UdpHolePuncherNegotiation {}
 
 impl UdpHolePuncherNegotiation {
     /// FIXME
+    /// NOTE: Only use Sender to subscribe
     pub async fn start_negotiation(
         ctx: &Context,
         onward_route: Route,
         udp: &UdpTransport,
         rendezvous_route: Route,
-    ) -> Result<Receiver<Route>> {
+    ) -> Result<(Receiver<Route>, Sender<Route>)> {
         let next = onward_route.next()?.clone();
 
         let udp_bind = udp
@@ -32,7 +33,7 @@ impl UdpHolePuncherNegotiation {
             onward_route,
             &udp_bind,
             client,
-            notify_reachable_sender,
+            notify_reachable_sender.clone(),
         );
 
         let address = Address::random_tagged("UdpHolePunctureNegotiator.initiator");
@@ -49,6 +50,6 @@ impl UdpHolePuncherNegotiation {
 
         ctx.start_worker(address, worker).await?; // FIXME: Access Control
 
-        Ok(notify_reachable_receiver)
+        Ok((notify_reachable_receiver, notify_reachable_sender))
     }
 }
