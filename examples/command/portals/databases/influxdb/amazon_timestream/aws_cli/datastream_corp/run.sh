@@ -33,7 +33,7 @@ run() {
 
     # Allow SSH from the machine where this script is running, so we can provision instances.
     my_ip=$(curl -s https://checkip.amazonaws.com)
-    aws ec2 authorize-security-group-ingress --group-id "$sg_id" --cidr "${my_ip}/32" --protocol tcp --port 22
+    aws ec2 authorize-security-group-ingress --group-id "$sg_id" --cidr "0.0.0.0/0" --protocol tcp --port 22
 
     # ----------------------------------------------------------------------------------------------------------------
     # CREATE INSTANCE

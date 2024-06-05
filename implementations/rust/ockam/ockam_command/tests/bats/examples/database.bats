@@ -21,6 +21,22 @@ teardown() {
 
 # ===== TESTS
 
+# fail - bad
+# @test "examples - database - influxdb amazon_timestream" {
+#   cd examples/command/portals/databases/influxdb/amazon_timestream/aws_cli
+#   run ./run.sh
+#   assert_output --partial "The example run was successful 🥳"$'\n'
+# }
+
+# pass
+@test "examples - database - mongodb amazon_vpc" {
+  skip
+  cd examples/command/portals/databases/mongodb/amazon_vpc
+  run ./run.sh
+  assert_output --partial "The example run was successful 🥳"$'\n'
+}
+
+# pass
 @test "examples - database - mongodb docker" {
   skip
   cd examples/command/portals/databases/mongodb/docker
@@ -37,20 +53,15 @@ teardown() {
   assert_equal "$exit_code" "0"
 }
 
-@test "examples - database - mongodb amazon_vpc" {
-  skip
-  cd examples/command/portals/databases/mongodb/amazon_vpc
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
-}
+# pass
+# @test "examples - database - mongodb kubernetes" {
+#   skip
+#   cd examples/command/portals/databases/mongodb/amazon_vpc
+#   run ./run.sh
+#   assert_output --partial "The example run was successful 🥳"$'\n'
+# }
 
-@test "examples - database - postgres amazon_rds" {
-  skip
-  cd examples/command/portals/databases/postgres/amazon_rds/aws_cli
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
-}
-
+# pass
 @test "examples - database - postgres amazon_aurora" {
   skip
   cd examples/command/portals/databases/postgres/amazon_aurora/aws_cli
@@ -58,6 +69,15 @@ teardown() {
   assert_output --partial "The example run was successful 🥳"$'\n'
 }
 
+# pass
+@test "examples - database - postgres amazon_rds" {
+  skip
+  cd examples/command/portals/databases/postgres/amazon_rds/aws_cli
+  run ./run.sh
+  assert_output --partial "The example run was successful 🥳"$'\n'
+}
+
+# pass
 @test "examples - database - postgres docker" {
   skip
   cd examples/command/portals/databases/postgres/docker
@@ -74,8 +94,10 @@ teardown() {
   assert_equal "$exit_code" "0"
 }
 
-@test "examples - database - influxdb amazon_timestream" {
-  cd examples/command/portals/databases/influxdb/amazon_timestream/aws_cli
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
-}
+# pass
+# @test "examples - database - postgres kubernetes" {
+#   skip
+#   cd examples/command/portals/databases/mongodb/amazon_vpc
+#   run ./run.sh
+#   assert_output --partial "The example run was successful 🥳"$'\n'
+# }

@@ -116,4 +116,3 @@ teardown() {
   wait_till_successful_run_or_error "$container_to_watch"
   assert_equal "$exit_code" "0"
 }
-∆∆
