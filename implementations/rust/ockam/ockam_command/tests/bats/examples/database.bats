@@ -38,7 +38,6 @@ teardown() {
 
 # pass
 @test "examples - database - mongodb docker" {
-  skip
   cd examples/command/portals/databases/mongodb/docker
   ./run.sh >/dev/null &
   BGPID=$!
@@ -79,7 +78,6 @@ teardown() {
 
 # pass
 @test "examples - database - postgres docker" {
-  skip
   cd examples/command/portals/databases/postgres/docker
   ./run.sh >/dev/null &
   BGPID=$!

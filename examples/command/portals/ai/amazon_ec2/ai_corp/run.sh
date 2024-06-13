@@ -132,8 +132,7 @@ cleanup() {
     # DELETE NETWORK
 
     vpc_ids=$(aws ec2 describe-vpcs \
-        --filters "Name=tag:Name,Values=${name}-vpc") \
-        --query 'Vpcs[*].VpcId'
+        --filters "Name=tag:Name,Values=${name}-vpc" --query 'Vpcs[*].VpcId') \
 
     for vpc_id in $vpc_ids; do
         internet_gateways=$(aws ec2 describe-internet-gateways \

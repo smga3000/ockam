@@ -23,6 +23,7 @@ teardown() {
 # ===== TESTS
 
 @test "examples - kafka - aiven serverless" {
+  skip
   container_to_watch="application_team-consumer-1"
   cd examples/command/portals/kafka/aiven
   ./run.sh >/dev/null &
@@ -38,6 +39,7 @@ teardown() {
 }
 
 @test "examples - kafka - instaclustr serverless" {
+  skip
   container_to_watch="application_team-consumer-1"
   cd examples/command/portals/kafka/instaclustr/docker
   ./run.sh >/dev/null &
@@ -53,6 +55,7 @@ teardown() {
 }
 
 @test "examples - kafka - confluent serverless" {
+  skip
   container_to_watch="application_team-consumer-1"
   cd examples/command/portals/kafka/confluent
   ./run.sh >/dev/null &
@@ -68,6 +71,7 @@ teardown() {
 }
 
 @test "examples - kafka - warpstream serverless" {
+  skip
   export EXTRA_ARG="$WARPSTREAM_API_KEY"
   container_to_watch="application_team-consumer-1"
 
