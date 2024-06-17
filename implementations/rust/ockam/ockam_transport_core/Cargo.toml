@@ -31,4 +31,4 @@ no_std = ["ockam_core/no_std"]
 alloc = ["ockam_core/alloc"]
 
 [dependencies]
-ockam_core = { path = "../ockam_core", version = "^0.110.0", default_features = false }
+ockam_core = { path = "../ockam_core", version = "^0.110.0", default-features = false }
