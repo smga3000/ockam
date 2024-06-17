@@ -5,7 +5,7 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
 
-use minicbor::{Decode, Encode};
+use minicbor::{CborLen, Decode, Encode};
 use ockam::identity::Identifier;
 use ockam_abac::PolicyExpression;
 use ockam_core::{Address, IncomingAccessControl, OutgoingAccessControl, Route};
@@ -21,7 +21,7 @@ use crate::session::sessions::ConnectionStatus;
 use crate::{route_to_multiaddr, try_address_to_multiaddr};
 
 /// Request body to create an inlet
-#[derive(Clone, Debug, Decode, Encode)]
+#[derive(Clone, Debug, Encode, Decode, CborLen)]
 #[rustfmt::skip]
 #[cbor(map)]
 pub struct CreateInlet {
@@ -144,7 +144,7 @@ impl CreateInlet {
 }
 
 /// Request body to create an outlet
-#[derive(Clone, Debug, Decode, Encode)]
+#[derive(Clone, Debug, Encode, Decode, CborLen)]
 #[rustfmt::skip]
 #[cbor(map)]
 pub struct CreateOutlet {
@@ -185,7 +185,7 @@ impl CreateOutlet {
 }
 
 /// Response body when interacting with a portal endpoint
-#[derive(Clone, Debug, Decode, Encode, Serialize)]
+#[derive(Clone, Debug, Encode, Decode, CborLen, Serialize)]
 #[rustfmt::skip]
 #[cbor(map)]
 pub struct InletStatus {
@@ -249,7 +249,7 @@ impl Output for InletStatus {
 }
 
 /// Response body when interacting with a portal endpoint
-#[derive(Clone, Debug, Decode, Encode, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Encode, Decode, CborLen, Serialize, Deserialize, PartialEq)]
 #[rustfmt::skip]
 #[cbor(map)]
 pub struct OutletStatus {

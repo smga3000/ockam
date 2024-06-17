@@ -1,12 +1,12 @@
 use crate::resolve_peer;
 use core::fmt::{Display, Formatter};
 use core::str::FromStr;
-use minicbor::{Decode, Encode};
+use minicbor::{CborLen, Decode, Encode};
 use ockam_core::errcode::{Kind, Origin};
 use std::net::SocketAddr;
 
 /// Hostname and port
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode, CborLen)]
 pub struct HostnamePort {
     #[n(0)]
     hostname: String,
