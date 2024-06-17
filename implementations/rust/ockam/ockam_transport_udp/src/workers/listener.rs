@@ -72,7 +72,7 @@ impl Processor for UdpListenProcessor {
         // Set return route to go directly to paired sender, skipping the UDP router
         let new_route = route![
             self.sender_addr.clone(),
-            Address::new(UDP, addr.to_string()),
+            Address::new_with_string(UDP, addr.to_string()),
             msg.return_route(),
         ];
         msg = msg.set_return_route(new_route);
