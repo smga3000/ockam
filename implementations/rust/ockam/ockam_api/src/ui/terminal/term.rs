@@ -41,6 +41,11 @@ impl TerminalWriter for TerminalStream<Term> {
         self.writer.write_line(&s)?;
         Ok(())
     }
+
+    fn clear(&self) -> Result<()> {
+        self.writer.clear_line()?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
