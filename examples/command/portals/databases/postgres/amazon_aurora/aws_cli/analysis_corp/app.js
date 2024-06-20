@@ -61,7 +61,7 @@ async function run() {
     console.log("USERS:", res.rows);
 
     console.log(
-      "\nThe example run was successful 🥳\n" +
+      "\nThe example run was successful 🥳.\n" +
       "\nThe app connected with the database through an encrypted portal." +
       "\nCreated a table, inserted some data, and querried it back.\n",
     );

@@ -10,9 +10,12 @@ services:
   # Read kafka_ockam.dockerfile and run_ockam.sh to understand
   # how the node is set up.
   consumer:
+    container_name: application_team-consumer
     build:
       context: .
       dockerfile: kafka_client.dockerfile
+      args:
+        OCKAM_VERSION: ${OCKAM_VERSION:-latest}
     environment:
       ENROLLMENT_TICKET: ${CONSUMER_ENROLLMENT_TICKET:-}
       KAFKA_CLUSTER_API_KEY: ${KAFKA_CLUSTER_API_KEY:-}
@@ -37,12 +40,13 @@ services:
             exit 1;
           fi;
 
-          echo "The example run was successful 🥳";
+          echo "The example run was successful 🥳.";
           echo "Messages received successfully, please Ctrl+C to exit";
           tail -f /dev/null;
         )
 
   producer:
+    container_name: application_team-producer
     build:
       context: .
       dockerfile: kafka_client.dockerfile

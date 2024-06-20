@@ -8,9 +8,12 @@ services:
   # Read kafka_ockam.dockerfile and run_ockam.sh to understand
   # how the node is set up.
   consumer:
+    container_name: application_team-consumer
     build:
       context: .
       dockerfile: ../kafka_ockam.dockerfile
+      args:
+        OCKAM_VERSION: ${OCKAM_VERSION:-latest}
     environment:
       ENROLLMENT_TICKET: ${CONSUMER_ENROLLMENT_TICKET:-}
       OCKAM_DEVELOPER: ${OCKAM_DEVELOPER:-false}
@@ -30,7 +33,7 @@ services:
             echo "Failed to received messages";
             exit 1;
           fi;
-          echo "The example run was successful 🥳";
+          echo "The example run was successful 🥳.";
           echo "Messages received successfully, please Ctrl+C to exit";
           tail -f /dev/null;
         )
@@ -38,6 +41,7 @@ services:
       - application_team
 
   producer:
+    container_name: application_team-producer
     build:
       context: .
       dockerfile: ../kafka_ockam.dockerfile

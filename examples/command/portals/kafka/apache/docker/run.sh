@@ -26,7 +26,11 @@ run() {
   # account in Orchestrator is the creator and hence first administrator on this new project,
   # the membership authority issues this credential. The enroll command stores the
   # credential for later use and exits.
+  echo "==> pass 1"
   ockam enroll
+  echo "==> pass 2"
+  ockam project list || echo "failed here"
+  echo "==> pass 3"
 
   # Create an enrollment ticket to enroll the identity used by an ockam node that will run
   # adjacent to the Kafka server in kafka_operator's network.

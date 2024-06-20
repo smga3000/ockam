@@ -33,7 +33,7 @@ exit_on_successful() {
   container_to_listen_to="$1"
   while true; do
     logs=$(docker logs "$container_to_listen_to")
-    if [[ "$logs" == *"The example run was successful 🥳"$'\n'* ]]; then
+    if [[ "$logs" == *"The example run was successful 🥳."$'\n'* ]]; then
       docker stop "$container_to_listen_to"
       return
     fi
@@ -41,6 +41,18 @@ exit_on_successful() {
   done
 }
 
-# Proposition to test Kubernetes
-# Check till pod exist
-# Wait till Pod till is in the state of CrashLoopBackOff (which means it's exited) or pod log gives a success
+wait_till_pod_starts() {
+  pod_to_listen_to="$1"
+  timeout=$2
+  if [[ -z $timeout ]]; then
+    timeout="250s"
+  fi
+
+  timeout "$timeout" bash <<EOT
+    while true; do
+      sleep 2
+      kubectl logs "$pod_to_listen_to" >/dev/null || continue
+      break
+    done
+EOT
+}

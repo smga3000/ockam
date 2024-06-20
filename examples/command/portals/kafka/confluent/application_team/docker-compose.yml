@@ -12,6 +12,8 @@ services:
     build:
       context: .
       dockerfile: ../kafka_ockam.dockerfile
+      args:
+        OCKAM_VERSION: ${OCKAM_VERSION:-latest}
     environment:
       ENROLLMENT_TICKET: ${CONSUMER_ENROLLMENT_TICKET:-}
       CONFLUENT_CLOUD_KAFKA_CLUSTER_API_KEY: ${CONFLUENT_CLOUD_KAFKA_CLUSTER_API_KEY:-}
@@ -35,7 +37,7 @@ services:
             exit 1;
           fi;
 
-          echo "The example run was successful 🥳";
+          echo "The example run was successful 🥳.";
           echo "Messages received successfully, please Ctrl+C to exit";
           tail -f /dev/null;
         )

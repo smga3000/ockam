@@ -13,7 +13,11 @@ setup() {
 }
 
 teardown() {
-  echo "#==== $EXTRA_ARG" >&3
+  if [[ -z $BATS_TEST_COMPLETED ]]; then
+    echo "Test failed $(pwd)" >&3
+    cat log.txt >&3 || true
+  fi
+
   ./run.sh cleanup $EXTRA_ARG || true
   unset EXTRA_ARG
   cd -
@@ -24,8 +28,40 @@ teardown() {
 
 @test "examples - kafka - aiven serverless" {
   skip
-  container_to_watch="application_team-consumer-1"
+  container_to_watch="application_team-consumer"
   cd examples/command/portals/kafka/aiven
+  ./run.sh >/dev/null &
+  BGPID=$!
+  trap 'kill $BGPID; exit' INT
+
+  run_success wait_till_container_starts "$container_to_watch"
+
+  exit_on_successful "$container_to_watch" &
+
+  wait_till_successful_run_or_error "$container_to_watch"
+  assert_equal "$exit_code" "0"
+}
+
+@test "examples - kafka - apache docker" {
+  container_to_watch="application_team-consumer"
+
+  cd examples/command/portals/kafka/apache/docker
+  ./run.sh >log.txt &
+  BGPID=$!
+  trap 'kill $BGPID; exit' INT
+
+  run_success wait_till_container_starts "$container_to_watch"
+
+  exit_on_successful "$container_to_watch" &
+
+  wait_till_successful_run_or_error "$container_to_watch"
+  assert_equal "$exit_code" "0"
+}
+
+@test "examples - kafka - confluent serverless" {
+  skip
+  container_to_watch="application_team-consumer"
+  cd examples/command/portals/kafka/confluent
   ./run.sh >/dev/null &
   BGPID=$!
   trap 'kill $BGPID; exit' INT
@@ -40,7 +76,7 @@ teardown() {
 
 @test "examples - kafka - instaclustr serverless" {
   skip
-  container_to_watch="application_team-consumer-1"
+  container_to_watch="application_team-consumer"
   cd examples/command/portals/kafka/instaclustr/docker
   ./run.sh >/dev/null &
   BGPID=$!
@@ -54,11 +90,11 @@ teardown() {
   assert_equal "$exit_code" "0"
 }
 
-@test "examples - kafka - confluent serverless" {
-  skip
-  container_to_watch="application_team-consumer-1"
-  cd examples/command/portals/kafka/confluent
-  ./run.sh >/dev/null &
+@test "examples - kafka - redpanda docker" {
+  container_to_watch="application_team-consumer"
+
+  cd examples/command/portals/kafka/redpanda/docker
+  ./run.sh >log.txt &
   BGPID=$!
   trap 'kill $BGPID; exit' INT
 
@@ -71,45 +107,11 @@ teardown() {
 }
 
 @test "examples - kafka - warpstream serverless" {
-  skip
   export EXTRA_ARG="$WARPSTREAM_API_KEY"
-  container_to_watch="application_team-consumer-1"
+  container_to_watch="application_team-consumer"
 
   cd examples/command/portals/kafka/warpstream
   ./run.sh $WARPSTREAM_API_KEY >/dev/null &
-  BGPID=$!
-  trap 'kill $BGPID; exit' INT
-
-  run_success wait_till_container_starts "$container_to_watch"
-
-  exit_on_successful "$container_to_watch" &
-
-  wait_till_successful_run_or_error "$container_to_watch"
-  assert_equal "$exit_code" "0"
-}
-
-
-@test "examples - kafka - apache docker" {
-  container_to_watch="application_team-consumer-1"
-
-  cd examples/command/portals/kafka/apache/docker
-  ./run.sh >/dev/null &
-  BGPID=$!
-  trap 'kill $BGPID; exit' INT
-
-  run_success wait_till_container_starts "$container_to_watch"
-
-  exit_on_successful "$container_to_watch" &
-
-  wait_till_successful_run_or_error "$container_to_watch"
-  assert_equal "$exit_code" "0"
-}
-
-@test "examples - kafka - redpanda docker" {
-  container_to_watch="application_team-consumer-1"
-
-  cd examples/command/portals/kafka/redpanda/docker
-  ./run.sh >/dev/null &
   BGPID=$!
   trap 'kill $BGPID; exit' INT
 

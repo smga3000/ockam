@@ -13,17 +13,13 @@ setup() {
 }
 
 teardown() {
-  echo "#==== $EXTRA_ARG" >&3
-  ./run.sh cleanup $EXTRA_ARG || true
-  unset EXTRA_ARG
-  cd -
+  ./run.sh cleanup || true
+  popd || true
   teardown_home_dir
 }
 
-# pass
 @test "examples - coderepos amazon ec2" {
-  skip
-  cd examples/command/portals/coderepos/gitlab/amazon_ec2/aws_cli
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
+  pushd examples/command/portals/coderepos/gitlab/amazon_ec2/aws_cli
+  run_success ./run.sh
+  assert_output --partial "The example run was successful 🥳."$'\n'
 }

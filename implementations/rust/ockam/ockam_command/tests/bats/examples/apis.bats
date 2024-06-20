@@ -14,21 +14,19 @@ setup() {
 
 teardown() {
   ./run.sh cleanup || true
-  cd -
+  popd
   teardown_home_dir
 }
 
 # pass
 @test "examples - apis - nodejs amazon_ec2" {
-  skip
-  cd examples/command/portals/apis/nodejs/amazon_ec2/aws_cli
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
+  pushd examples/command/portals/apis/nodejs/amazon_ec2/aws_cli
+  run_success ./run.sh
+  assert_output --partial "The example run was successful 🥳."$'\n'
 }
 
 @test "examples - apis - python amazon_ec2" {
-  skip
-  cd examples/command/portals/apis/python/amazon_ec2/aws_cli
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
+  pushd examples/command/portals/apis/python/amazon_ec2/aws_cli
+  run_success ./run.sh
+  assert_output --partial "The example run was successful 🥳."$'\n'
 }

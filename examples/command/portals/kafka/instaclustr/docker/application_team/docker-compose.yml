@@ -12,6 +12,8 @@ services:
     build:
       context: .
       dockerfile: kafka_client.dockerfile
+      args:
+        OCKAM_VERSION: ${OCKAM_VERSION:-latest}
     environment:
       ENROLLMENT_TICKET: ${CONSUMER_ENROLLMENT_TICKET:-}
       OCKAM_DEVELOPER: ${OCKAM_DEVELOPER:-false}
@@ -34,7 +36,7 @@ services:
             exit 1;
           fi;
           echo "Messages received successfully";
-          echo "The example run was successful 🥳";
+          echo "The example run was successful 🥳.";
           echo "The consumer was able to decrypt messages, Instaclustr only saw encrypted messages";
           echo "Messages received successfully, please Ctrl+C to exit";
           tail -f /dev/null;

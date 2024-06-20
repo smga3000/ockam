@@ -14,7 +14,7 @@ setup() {
 
 teardown() {
   ./run.sh cleanup || true
-  cd -
+  popd
   teardown_home_dir
 }
 
@@ -22,15 +22,13 @@ teardown() {
 # ===== TESTS
 
 @test "examples - ai - amazon_bedrock" {
-  skip
-  cd examples/command/portals/ai/amazon_bedrock
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
+  pushd examples/command/portals/ai/amazon_bedrock
+  run_success ./run.sh
+  assert_output --partial "The example run was successful 🥳."$'\n'
 }
 
 @test "examples - ai - amazon_ec2" {
-  skip
-  cd examples/command/portals/ai/amazon_ec2
-  run ./run.sh
-  assert_output --partial "The example run was successful 🥳"$'\n'
+  pushd examples/command/portals/ai/amazon_ec2
+  run_success ./run.sh
+  assert_output --partial "The example run was successful 🥳."$'\n'
 }

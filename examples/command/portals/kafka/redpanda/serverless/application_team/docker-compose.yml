@@ -9,9 +9,12 @@ services:
   # Read kafka_client.dockerfile and run_ockam.sh to understand
   # how the node is set up.
   consumer:
+    container_name: application_team-consumer
     build:
       context: .
       dockerfile: kafka_client.dockerfile
+      args:
+        OCKAM_VERSION: ${OCKAM_VERSION:-latest}
     environment:
       ENROLLMENT_TICKET: ${CONSUMER_ENROLLMENT_TICKET:-}
       REDPANDA_ADDRESS: ${REDPANDA_ADDRESS:-}
@@ -36,7 +39,7 @@ services:
                   --consumer.config /tmp/consumer.properties;
           if [ "$?" == "0" ]; then
             echo "";
-            echo "The example run was successful 🥳";
+            echo "The example run was successful 🥳.";
             echo "The consumer was able to decrypt messages, Redpanda only saw encrypted messages";
             echo "";
           fi;
@@ -46,6 +49,7 @@ services:
           tail -f /dev/null;
         )
   producer:
+    container_name: application_team-producer
     build:
       context: .
       dockerfile: kafka_client.dockerfile
